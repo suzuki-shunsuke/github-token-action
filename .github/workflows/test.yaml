@@ -11,10 +11,7 @@ jobs:
       - uses: actions/checkout@ac593985615ec2ede58e132d2e21d2b1cbd6127c # v3
       - uses: ./
         id: github_token
-      - run: |
-          gh api \
-            -H "Accept: application/vnd.github+json" \
-            /user
+      - run: gh auth status
         env:
           GITHUB_TOKEN: ${{steps.github_token.outputs.token}}
 
@@ -23,10 +20,7 @@ jobs:
         with:
           github_app_id: ${{secrets.APP_ID}}
           github_app_private_key: ${{secrets.APP_PRIVATE_KEY}}
-      - run: |
-          gh api \
-            -H "Accept: application/vnd.github+json" \
-            /user
+      - run: gh auth status
         env:
           GITHUB_TOKEN: ${{steps.github_app_token.outputs.token}}
 
@@ -34,9 +28,6 @@ jobs:
         id: github_pat
         with:
           github_token: ${{secrets.GH_TOKEN}}
-      - run: |
-          gh api \
-            -H "Accept: application/vnd.github+json" \
-            /user
+      - run: gh auth status
         env:
           GITHUB_TOKEN: ${{steps.github_pat.outputs.token}}
