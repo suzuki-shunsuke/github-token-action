@@ -18,9 +18,9 @@ This action takes some inputs for them and returns an access token.
 ```yaml
 - uses: suzuki-shunsuke/github-token-action@main
   with:
-    github_token: secrets.GH_TOKEN
-    github_app_id: secrets.APP_ID
-    github_app_private_key: secrets.APP_PRIVATE_KEY
+    github_token: ${{secrets.GH_TOKEN}}
+    github_app_id: ${{secrets.APP_ID}}
+    github_app_private_key: ${{secrets.APP_PRIVATE_KEY}}
 ```
 
 ## Inputs
