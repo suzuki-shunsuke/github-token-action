@@ -1,0 +1,61 @@
+name: github-token
+description:
+inputs:
+  github_token:
+    description: GitHub Access Token
+    required: false
+  github_app_id:
+    description: GitHub App ID
+    required: false
+    default: ""
+  github_app_private_key:
+    description: GitHub App Private Key
+    required: false
+    default: ""
+outputs:
+  token:
+    description: GitHub Access Token
+    value: ${{steps.output_token.outputs.token}}
+runs:
+  using: composite
+  steps:
+    - id: check
+      shell: bash
+      env:
+        TOKEN: ${{inputs.github_token}}
+        APP_ID: ${{inputs.github_app_id}}
+        APP_PRIVATE_KEY: ${{inputs.github_app_private_key}}
+      run: |
+        if [ -n "$TOKEN" ]; then
+          echo "token=true" >> "$GITHUB_OUTPUT"
+        fi
+        if [ -n "$APP_ID" ]; then
+          echo "app_id=true" >> "$GITHUB_OUTPUT"
+        fi
+        if [ -n "$APP_PRIVATE_KEY" ]; then
+          echo "app_private_key=true" >> "$GITHUB_OUTPUT"
+        fi
+
+    - id: generate_token
+      uses: tibdex/github-app-token@021a2405c7f990db57f5eae5397423dcc554159c # v1
+      with:
+        app_id: ${{inputs.github_app_id}}
+        private_key: ${{inputs.github_app_private_key}}
+      if: steps.check.outputs.app_id == 'true'
+
+    - id: output_token
+      shell: bash
+      env:
+        GH_TOKEN: ${{github.token}}
+        TOKEN: ${{inputs.github_token}}
+        APP_TOKEN: ${{steps.generate_token.outputs.token}}
+      run: |
+        if [ -n "$TOKEN" ]; then
+          echo "token=$TOKEN" >> "$GITHUB_OUTPUT"
+          exit 0
+        fi
+        if [ -n "$APP_TOKEN" ]; then
+          echo "token=$APP_TOKEN" >> "$GITHUB_OUTPUT"
+          exit 0
+        fi
+        echo "token=$GH_TOKEN" >> "$GITHUB_OUTPUT"
