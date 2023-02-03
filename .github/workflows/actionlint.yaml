@@ -11,7 +11,7 @@ on:
 permissions: {}
 jobs:
   actionlint:
-    uses: suzuki-shunsuke/actionlint-workflow/.github/workflows/actionlint.yaml@f82e21d47fa698cc5fed4061dcc9a63cc68dce9b # v0.2.2
+    uses: suzuki-shunsuke/actionlint-workflow/.github/workflows/actionlint.yaml@67b3612237144931fa976f6ef10e257b4c601492 # v0.4.0
     permissions:
       pull-requests: write
       contents: read
