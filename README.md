@@ -18,7 +18,7 @@ This action takes some inputs for them and returns an access token.
 ## Usage
 
 ```yaml
-- uses: suzuki-shunsuke/github-token-action@main
+- uses: suzuki-shunsuke/github-token-action@04d633c696e9d09e958c8b815c75db9606d6d927 # v0.2.0
   with:
     github_token: ${{secrets.GH_TOKEN}}
     github_app_id: ${{secrets.APP_ID}}
