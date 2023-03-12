@@ -7,15 +7,19 @@ inputs:
   github_app_id:
     description: GitHub App ID
     required: false
-    default: ""
   github_app_private_key:
     description: GitHub App Private Key
     required: false
-    default: ""
+  default_github_token:
+    description: GitHub Access Token
+    required: false
 outputs:
   token:
     description: GitHub Access Token
     value: ${{steps.output_token.outputs.token}}
+  token_type:
+    description: github_token, github_app_token, default_github_token, empty
+    value: ${{steps.output_token.outputs.token_type}}
 runs:
   using: composite
   steps:
@@ -26,6 +30,7 @@ runs:
         APP_ID: ${{inputs.github_app_id}}
         APP_PRIVATE_KEY: ${{inputs.github_app_private_key}}
       run: |
+        set -eu
         if [ -n "$TOKEN" ]; then
           echo "token=true" >> "$GITHUB_OUTPUT"
         fi
@@ -37,7 +42,7 @@ runs:
         fi
 
     - id: generate_token
-      uses: tibdex/github-app-token@021a2405c7f990db57f5eae5397423dcc554159c # v1
+      uses: tibdex/github-app-token@b62528385c34dbc9f38e5f4225ac829252d1ea92 # v1.8.0
       with:
         app_id: ${{inputs.github_app_id}}
         private_key: ${{inputs.github_app_private_key}}
@@ -48,14 +53,21 @@ runs:
       env:
         GH_TOKEN: ${{github.token}}
         TOKEN: ${{inputs.github_token}}
+        DEFAULT_TOKEN: ${{inputs.default_github_token}}
         APP_TOKEN: ${{steps.generate_token.outputs.token}}
       run: |
+        set -eu
+        token="$DEFAULT_TOKEN"
+        token_type=default_github_token
         if [ -n "$TOKEN" ]; then
-          echo "token=$TOKEN" >> "$GITHUB_OUTPUT"
-          exit 0
+          token="$TOKEN"
+          token_type=github_token
+        elif [ -n "$APP_TOKEN" ]; then
+          token="$APP_TOKEN"
+          token_type=github_app_token
         fi
-        if [ -n "$APP_TOKEN" ]; then
-          echo "token=$APP_TOKEN" >> "$GITHUB_OUTPUT"
-          exit 0
+        echo "token=$token" >> "$GITHUB_OUTPUT"
+        if [ -z "$token" ]; then
+          token_type=empty
         fi
-        echo "token=$GH_TOKEN" >> "$GITHUB_OUTPUT"
+        echo "token_type=$token_type" >> "$GITHUB_OUTPUT"
