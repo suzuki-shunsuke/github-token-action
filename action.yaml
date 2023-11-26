@@ -10,6 +10,12 @@ inputs:
   github_app_private_key:
     description: GitHub App Private Key
     required: false
+  github_app_permissions:
+    description: GitHub App permissions
+    required: false
+  github_app_repositories:
+    description: GitHub App repositories
+    required: false
   default_github_token:
     description: GitHub Access Token
     required: false
@@ -46,6 +52,8 @@ runs:
       with:
         app_id: ${{inputs.github_app_id}}
         private_key: ${{inputs.github_app_private_key}}
+        permissions: ${{inputs.github_app_permissions}}
+        repositories: ${{inputs.github_app_repositories}}
       if: steps.check.outputs.app_id == 'true'
 
     - id: output_token
