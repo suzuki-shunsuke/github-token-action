@@ -12,3 +12,12 @@ jobs:
     permissions:
       contents: read
       pull-requests: write
+  status-check:
+    timeout-minutes: 10
+    runs-on: ubuntu-24.04
+    permissions: {}
+    if: failure()
+    steps:
+      - run: exit 1
+    needs:
+      - check-commit-signing

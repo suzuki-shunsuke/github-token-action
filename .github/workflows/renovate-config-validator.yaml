@@ -1,0 +1,21 @@
+---
+name: renovate-config-validator
+on:
+  pull_request:
+    paths:
+      - .github/workflows/renovate-config-validator.yaml
+      - renovate.json5
+jobs:
+  renovate-config-validator:
+    uses: suzuki-shunsuke/renovate-config-validator-workflow/.github/workflows/validate.yaml@e8effbd185cbe3874cddef63f48b8bdcfc9ada55 # v0.2.4
+    permissions:
+      contents: read
+  status-check:
+    timeout-minutes: 10
+    runs-on: ubuntu-24.04
+    permissions: {}
+    if: failure()
+    steps:
+      - run: exit 1
+    needs:
+      - renovate-config-validator
